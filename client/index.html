@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes</title>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="main-title">
+            Recipes 
+        </h1>
+    </header>
+    <br>
+    <div class="section-form">
+        <div class="words-form">
+            <h2>Create Recipe!</h2> 
+            <p>Fill out the form to create your own recipe</p>
+            <!-- <img src="./assets/img/Paella-mixta.jpg" alt="Homepage pic 1"> -->
+        </div>
+            <form class="recipe-form" autocomplete="off">
+                <input type="text" class="form-input" placeholder="Cruise Title" id="title" id="title" maxlength="100" required />
+                <label for="title" class="form-label" >Cruise Title</label>
+
+                <input type="text" class="form-input" placeholder="Cruise Type" name="type" id="type"  maxlength="100" required />
+                <label for="type" class="form-label" >Cruise Type </label>
+
+                <input type="number" class="form-input" placeholder="Cook Duration(min)" name="duration" id="duration" min="0" max="1440"/>
+                <label for="description" class="form-label" >Cook Duration(min)</label>
+
+                <input type="text" class="form-input" placeholder="Photo Url or Local Dir" name="photoUrl" maxlength="255" id="photoUrl" pattern="(https?:\/\/.*|\.\/assets\/img\/.*)\.(jpg|jpeg|png)$" />
+                <label for="photoUrl" class="form-label" >Photo Url or Local Dir</label>
+
+                <input type="text" class="form-input2" placeholder="Description" name="description" maxlength="255" id="description" />
+                <label for="description" class="form-label" >Description</label>
+
+
+                <input type="submit" name="submit" value="+ Create Recipe" />
+            </form>
+    </div>
+
+    <div class="section-list">
+        <br>
+        <h2>
+            Display All Recipes
+        </h2>
+        <ul class="recipe-list">
+        </ul>
+    </div>
+
+    <div class="form-popup" id="updateForm">
+
+    </div>
+
+
+    <footer>
+        <!-- Your footer content goes here -->
+        <p>&copy; Lin created.</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
