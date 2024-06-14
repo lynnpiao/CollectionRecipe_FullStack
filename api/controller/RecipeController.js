@@ -1,50 +1,16 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const Joi = require('joi');
-
-// Validation For create Recipe
-// Joi validation schema 
-const recipeSchema = Joi.object({
-    title: Joi.string().max(100).required(),
-    type: Joi.string().max(100).required(),
-    description: Joi.string().max(255).allow(null, ''),
-    duration: Joi.number().integer().positive().max(1440).allow(null),
-    photoUrl: Joi.string().max(255).pattern(/^(https?:\/\/|\.\/assets\/img\/).*\.(jpg|jpeg|png)$/).allow(null, '')
-});
-
-// Middleware for validating request data
-const validateRecipe = (req, res, next) => {
-    const { error } = recipeSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ msg: error.details[0].message });
-    }
-    next();
-}
-
-
-// Validation For Update Recipe
-// Joi validation schema 
-const partialRecipeSchema = Joi.object({
-    description: Joi.string().max(255).allow(null, ''),
-    duration: Joi.number().integer().positive().max(1440).allow(null),
-    photoUrl: Joi.string().max(255).pattern(/^(https?:\/\/|\.\/assets\/img\/).*\.(jpg|jpeg|png)$/).allow(null, '')
-});
-
-// Middleware for validating request data
-const validatePartialRecipe = (req, res, next) => {
-    const { error } = partialRecipeSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ msg: error.details[0].message });
-    }
-    next();
-}
-
-
+const {validatePartialRecipe, validateRecipe} = require('../middleware/SchemaMiddleware')
 
 // read all
 const getRecipes = async (req, res) => {
     try {
         const response = await prisma.recipe.findMany()
+
+        if (response.length===0){
+            return res.status(404).json({ msg: 'No Recipe found' })
+        }
+
         res.status(200).json(response)
     } catch (error) {
         res.status(500).json({ msg: error.message })
@@ -53,6 +19,14 @@ const getRecipes = async (req, res) => {
 
 // read one
 const getRecipeById = async (req, res) => {
+    const id = req.params.id;
+    const idInt = parseInt(id);
+
+    
+    if (isNaN(idInt) || !Number.isInteger(idInt)) {
+        return res.status(400).json({ error: 'Invalid recipe ID' });
+    }
+
     try {
         const response = await prisma.recipe.findUnique({
             where: {
@@ -73,6 +47,7 @@ const getRecipeById = async (req, res) => {
 // create 
 const createRecipe = async (req, res) => {
     const { title, type, description, duration, photoUrl } = req.body
+
     try {
         const recipe = await prisma.recipe.create({
             data: {
@@ -95,6 +70,14 @@ const createRecipe = async (req, res) => {
 //update 
 const updateRecipe = async (req, res) => {
     const {description, duration, photoUrl } = req.body
+
+    // not allow update information with all attributes are null
+    if ((description == null || description === '') && 
+        (duration == null || duration === '') && 
+        (photoUrl == null || photoUrl === '')){
+        return res.status(400).json({ error: 'At least one attribute is available' });
+    } 
+
     try {
         const recipe = await prisma.recipe.update({
             where: {
@@ -116,10 +99,18 @@ const updateRecipe = async (req, res) => {
 
 // delete
 const deleteRecipe = async (req, res) => {
+
+    const id = req.params.id;
+    const idInt = parseInt(id);
+
+    if (isNaN(idInt) || !Number.isInteger(idInt)) {
+        return res.status(400).json({ error: 'Invalid recipe ID' });
+    }
+
     try {
         const recipe = await prisma.recipe.delete({
             where: {
-                id: parseInt(req.params.id),
+                id: idInt,
             },
         })
         res.status(200).json(recipe); 

@@ -130,6 +130,11 @@ const updateSingleRecipe = (updateRecipe) => {
         description: updateRecipe.description
     }
 
+    if ((updateRecipe.description == null || updateRecipe.description === '') && 
+        (updateRecipe.duration == null || updateRecipe.duration === '') && 
+        (updateRecipe.photoUrl == null || updateRecipe.photoUrl === '')){
+        console.error('At least one attribute is available')
+    } else {
     fetch(`http://localhost:8000/recipes/${id}`, {
         method: "PUT",
         headers: {
@@ -146,7 +151,7 @@ const updateSingleRecipe = (updateRecipe) => {
         }
     ).catch((error) => {
         console.error('There was a problem with the update operation:', error);
-    });
+    });}
 };
 
 // Update List
